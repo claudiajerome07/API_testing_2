@@ -14,6 +14,17 @@ app.post('/books', (req, res) => {
         return res.status(400).json({ error: 'All book fields are required.' });
     }
 
+    if (typeof book_id !== 'string' || typeof title !== 'string' || typeof author !== 'string' ||
+        typeof genre !== 'string' || typeof year !== 'number' || typeof copies !== 'number') {
+        return res.status(400).json({ error: 'Invalid data types for book fields.' });
+    }
+
+
+    if (year < 0 || copies < 0) {
+        return res.status(400).json({ error: 'Year and copies must be non-negative.' });
+    }
+
+
     if (books.some(book => book.book_id === book_id)) {
         return res.status(400).json({ error: 'Book with this ID already exists.' });
     }
@@ -25,6 +36,10 @@ app.post('/books', (req, res) => {
 
 // Retrieve all books
 app.get('/books', (req, res) => {
+
+    if (books.length === 0) {
+        return res.status(200).json({ message: 'No books available in the library.' });
+    }
     res.status(200).json(books);
 });
 
@@ -46,6 +61,16 @@ app.put('/books/:id', (req, res) => {
     if (bookIndex === -1) {
         return res.status(404).json({ error: 'Book not found.' });
     }
+
+    const { title, author, genre, year, copies } = req.body;
+
+    if (year && typeof year !== 'number') {
+        return res.status(400).json({ error: 'Year must be a number.' });
+    }
+    if (copies && typeof copies !== 'number') {
+        return res.status(400).json({ error: 'Copies must be a number.' });
+    }
+
 
     const updatedBook = { ...books[bookIndex], ...req.body };
     books[bookIndex] = updatedBook;
