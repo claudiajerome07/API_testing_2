@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-let books = [];
+// let books = [];
+const books= require('./data.json')
 
 // Create a new book
 app.post('/books', (req, res) => {
